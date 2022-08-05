@@ -55,8 +55,7 @@ def track(*targs, timeit=False, verbose=False, before=None, after=None):
             sequence_recorder = [] # TODO: add seq recorder
             for arg in targs:
                 """
-                TODO: 
-                need to check if arg is object or a variable
+                TODO:
                 need to check the arg is part of fun_self class
                 need to check the arg is an argument to fun_self
                 """
