@@ -56,8 +56,7 @@ def get_logger(verbose):
     return log
 
 
-def proxyWrapper(self, arg):
-    log = get_logger()
+def proxyWrapper(self, arg, log):
     try:
         if arg in self.__dir__():
             exec("self.%s = Proxy(self.%s, log)" %(arg, arg))
@@ -67,8 +66,7 @@ def proxyWrapper(self, arg):
         raise AttributeError('no variable `%s` found' %(arg))
 
 
-def proxyUnWrapper(self, arg):
-    log = get_logger()
+def proxyUnWrapper(self, arg, log):
     try:
         if arg in self.__dir__():
             exec("self.%s = self.%s.obj" %(arg, arg))
@@ -83,7 +81,7 @@ def track(*targs, timeit=False, verbose=False): # before=None, after=None
         def wrapfun(self, *args, **kwargs):
             log = get_logger(verbose)
             for arg in targs:
-                proxyWrapper(self, arg)
+                proxyWrapper(self, arg, log)
                 log.debug(f"wrapped {arg}")
 
             st = time()
@@ -91,7 +89,7 @@ def track(*targs, timeit=False, verbose=False): # before=None, after=None
             tt = time() - st
 
             for arg in targs:
-                proxyUnWrapper(self, arg)
+                proxyUnWrapper(self, arg, log)
                 log.debug(f"un-wrapped {arg}")
             return res
         return wrapfun

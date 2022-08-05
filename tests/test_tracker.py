@@ -1,5 +1,6 @@
 
-from ncs_tracker.tracker import track
+from ncs_tracker import tracker
+
 
 class Trans:
     def open(self):
@@ -22,7 +23,7 @@ class newService(ncs):
         self.service = "/services/service/dummy"
         self.trans = Trans()
 
-    @track('trans', verbose=True)
+    @tracker.track('trans', verbose=True)
     def applyService(self):
         print(f"self.root: {self.root}")
         print(f"self.service: {self.service}")
