@@ -1,5 +1,5 @@
 from logging import INFO, DEBUG
-
+from log import Logger
 
 def track(*targs, verbose=False, before=None, after=None):
     def wrapper(fun):
@@ -7,23 +7,27 @@ def track(*targs, verbose=False, before=None, after=None):
         if verbose:
             level = DEBUG
         log = Logger(level).log
+        print(level, log.level, Logger().level)
 
         def wrapfun(fun_self, *args, **kwargs):
             class Dynamic:
+                tracker = {} # method: [operaton-time, ]
+                tracker_result = {} # method: (no of times called, total time, [operaton-time, ])
                 def __init__(self, obj):
                     self.obj = obj
-                    log.debug(f"{self.obj.__class__} wrapped")
+                    self.name = f"{obj.__class__.__name__} class"
+                    log.debug(f"{self.name} wrapped")
 
                 def __getattr__(self, method):
                     def mwrap(*args, **kwargs):
-                        log.debug(f"{self.obj.__class__} calling {method} with args {args}, {kwargs}")
+                        log.debug(f"{self.name} calling `{method}` with params {args}, {kwargs}")
                         return getattr(self.obj, method)(*args, **kwargs)
-                    log.debug(f"{self.obj.__class__} checking for method")
+                    log.debug(f"{self.name} checking for `{method}`")
                     if hasattr(self.obj, method):
                         return mwrap
                     else:
                         # TODO: don't know how field works
-                        msg = f"{self.obj.__class__}, no such field/method found"
+                        msg = f"{self.name}, no such field/method found"
                         log.error(msg)
                         raise AttributeError(msg)
             for arg in targs:
@@ -33,7 +37,9 @@ def track(*targs, verbose=False, before=None, after=None):
                 log.debug(f"wrapped {arg}")
             if before:
                 log.info(before)
+            # TODO: method time start
             res = fun(fun_self, *args, **kwargs)
+            # TODO: method time end
             if after:
                 log.info(after)
             for arg in targs:
@@ -65,7 +71,7 @@ class newService(ncs):
         self.service = "/services/service/dummy"
         self.trans = Trans()
 
-    @track('trans', verbose=True)
+    @track('trans', verbose=False)
     def applyService(self):
         print(f"self.root: {self.root}")
         print(f"self.service: {self.service}")
