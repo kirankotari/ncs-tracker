@@ -1,7 +1,9 @@
 # -*- mode: python; python-indent: 4 -*-
 import ncs
 from ncs.application import Service
-from ncs_tracker.tracker import track
+# from ncs.dp import Action
+# from ncs_tracker.tracker import track
+from .tracker2 import Tracker
 
 # ------------------------
 # SERVICE CALLBACK EXAMPLE
@@ -10,9 +12,10 @@ class ServiceCallbacks(Service):
 
     # The create() callback is invoked inside NCS FASTMAP and
     # must always exist.
-    
+    # @track_service('tctx', timeit=True, verbose=True)
+
     @Service.create
-    @track('tctx', 'root', 'service', verbose=True)
+    @Tracker.service
     def cb_create(self, tctx, root, service, proplist):
         self.log.info('Service create(service=', service._path, ')')
 
@@ -42,7 +45,10 @@ class ServiceCallbacks(Service):
     # def cb_post_modification(self, tctx, op, kp, root, proplist):
     #     self.log.info('Service premod(service=', kp, ')')
 
-
+# class ActionCallbacks(Action):
+#     @Action.action
+#     def cb_action(self, uinfo, name, kp, input, output, trans):
+#         output.text = "Hello, World"
 # ---------------------------------------------
 # COMPONENT THREAD THAT WILL BE STARTED BY NCS.
 # ---------------------------------------------
@@ -56,6 +62,7 @@ class Main(ncs.application.Application):
         # as specified in the corresponding data model.
         #
         self.register_service('transtrack-servicepoint', ServiceCallbacks)
+        # self.register_action('test', ActionCallbacks)
 
         # If we registered any callback(s) above, the Application class
         # took care of creating a daemon (related to the service/action point).

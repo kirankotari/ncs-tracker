@@ -58,6 +58,7 @@ def get_logger(verbose):
 
 def proxyWrapper(self, arg, log):
     try:
+        log.debug(f"kkotari: {self.__dir__()}")
         if arg in self.__dir__():
             exec("self.%s = Proxy(self.%s, log)" %(arg, arg))
         else:
@@ -80,6 +81,8 @@ def track(*targs, timeit=False, verbose=False): # before=None, after=None
     def wrapper(fun):
         def wrapfun(self, *args, **kwargs):
             log = get_logger(verbose)
+            log.info("I am in track..!")
+            log.info(f"kkotari: {args}")
             for arg in targs:
                 proxyWrapper(self, arg, log)
                 log.debug(f"wrapped {arg}")
@@ -91,6 +94,27 @@ def track(*targs, timeit=False, verbose=False): # before=None, after=None
             for arg in targs:
                 proxyUnWrapper(self, arg, log)
                 log.debug(f"un-wrapped {arg}")
+            return res
+        return wrapfun
+    return wrapper
+
+def track_service(*targs, timeit=False, verbose=False):
+    log = get_logger(verbose)
+    log.info("kkotari: track_service, started")
+    def wrapper(fun):
+        log.info("kkotari: wrapper fun, started")
+        def wrapfun(self, *args, **kwargs):
+            log = get_logger(verbose)
+            log.info("kkotari: wrapfun, started")
+            tctx = 10
+            st = time()
+            log.info(f"kkotari: fun is {fun} with {args}")
+            res = fun(self, *args, **kwargs)
+            tt = time() - st
+            if timeit:
+                log.info(f"kkotari: timetaken: {tt}")
+                log.info(f"kkotari: res: {res}")
+
             return res
         return wrapfun
     return wrapper
