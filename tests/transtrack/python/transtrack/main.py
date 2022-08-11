@@ -3,7 +3,7 @@ import ncs
 from ncs.application import Service
 # from ncs.dp import Action
 # from ncs_tracker.tracker import track
-from .tracker2 import Tracker
+from ncs_tracker.tracker2 import Tracker
 
 # ------------------------
 # SERVICE CALLBACK EXAMPLE
@@ -62,6 +62,7 @@ class Main(ncs.application.Application):
         # as specified in the corresponding data model.
         #
         self.register_service('transtrack-servicepoint', ServiceCallbacks)
+        self.log.info(f'kkotari: {Tracker.report()}')
         # self.register_action('test', ActionCallbacks)
 
         # If we registered any callback(s) above, the Application class
