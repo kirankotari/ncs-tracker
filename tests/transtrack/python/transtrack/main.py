@@ -3,7 +3,7 @@ import ncs
 from ncs.application import Service
 # from ncs.dp import Action
 # from ncs_tracker.tracker import track
-from ncs_tracker.tracker2 import Tracker
+from .tracker3 import Tracker
 
 # ------------------------
 # SERVICE CALLBACK EXAMPLE
